@@ -1,0 +1,57 @@
+## About TUCal
+
+TUCal is an application that allows you to take the rigid MyTimetable iCal export and split it into different calendars. For example, you can divide the calendar into standard lectures, miscellaneous events, and exams.
+
+## DISCLAIMER
+
+I do not take any responsiblity for missed lectures/practicums/exams. Compare your timetables to make sure your application works first.
+
+## How to run
+In order to run, you will need to create a `cal.yaml` file (below) and install Docker. After that, run `docker compose up -d --build` in the project root, and it should run by itself! Note that you will need to uncomment the ports label in the `docker-compose.yaml` to be able to access it from outside the Docker bridge.
+
+## Set up the calendar file
+The code looks for a file in the workspace root named `cal.yaml`. It needs to have the following structure:
+
+```yaml
+source_url: <The URL to your MyTimetable .ics export>
+
+calendars:
+  <Any name>:
+    name: 'Any name' # will show up in your calendar as a title/description
+    url: 'Any URL' # the URL extension to get this calendar
+    regex: 'Any regex' # something custom in the description of the event that distinguishes it (e.g. 'Course code: CSE\d+', which matches the CSE prefix + any number of digits afterwards 
+    color: 'Any color' # this is basically supported nowhere, so don't bother and just recolor your calendar in your app
+
+  <Any name>:
+    name: ...
+    url: ...
+    regex: ...
+    color: ...
+```
+
+## Example cal.yaml
+```yaml
+source_url: 'https://mytimetable.tudelft.nl/ical?[MyTimetable URL]'
+
+calendars:
+  exams:
+    name: 'TU Delft: Exams'
+    url: exams
+    regex: 'Type: \w+ Exam' # matches any digital or written exam
+    color: purple
+
+  misc:
+    name: 'TU Delft: Miscellaneous'
+    url: misc
+    regex: 'Type: Additional' # matches random stuff like assemblies and panels
+    color: salmon
+
+  compsci:
+    name: 'BSc Computer Science & Engineering'
+    url: cse
+    regex: '(?:Course code: CSE\d+|EEMCS-Bachelor Y\d TI \(\d{4}/\d{4}\))' # matches course codes OR the bachelor name (unreliable, professors are not consistent with this)
+    color: blue
+```
+
+## Read the calendars
+By default, the container will not publish any ports, which you should uncomment in the docker-compose.yaml (or use networks). If you do, you'll be able to read your calendars at `localhost:8080/tucal/calendar/<calendar_url>` by default.

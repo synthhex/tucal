@@ -1,0 +1,10 @@
+name: tucal
+
+services:
+  tucal:
+    build: .
+    # ports:
+      # - "8080:8000"
+    container_name: tucal
+    networks:
+      - default

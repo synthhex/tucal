@@ -1,0 +1,6 @@
+fastapi
+fastapi-utilities
+httpx
+uvicorn
+icalendar
+pyyaml
